@@ -23,7 +23,6 @@ Public Class Main
         listener.Start()
         Console.WriteLine("listen start")
 
-        Dim use_proxy = Me.ProxyHost.Length > 0
         If Me.SSLValidationSkip Then
 
             ServicePointManager.ServerCertificateValidationCallback =
@@ -45,6 +44,8 @@ Public Class Main
                         listener.BeginAcceptTcpClient(accept, Nothing)
 
                         Using remote As New ClientWebSocket
+
+                            If Me.ProxyHost.Length > 0 Then remote.Options.Proxy = New WebProxy(Me.ProxyHost, Me.ProxyPort)
 
                             Debug.WriteLine("connect {0} -> {1}", local.Client.RemoteEndPoint, Me.Uri)
                             Await remote.ConnectAsync(New Uri(Me.Uri), CancellationToken.None)
